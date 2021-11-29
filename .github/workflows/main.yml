@@ -45,7 +45,7 @@ jobs:
 
     deploy:
        runs-on: ubuntu-latest
-       needs: [my_ci_pipeline]
+       needs: [build]
 
        steps:
          - name: Configure my AWS Credentils
