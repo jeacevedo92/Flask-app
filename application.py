@@ -4,7 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['DEBUG'] = True
+app.config['TESTING'] = False
+app.config['CSRF_ENABLED'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://${{ secrets.USER_DATABASE }}:${{ secrets.PASS_DATABASE }}@${{ secrets.HOST_DATABASE }}:${{ secrets.PORT_DATABASE }}/flaskmysql'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
