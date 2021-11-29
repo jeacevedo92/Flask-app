@@ -1,9 +1,10 @@
+import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config.from_object("config.Config")
+app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -28,7 +29,7 @@ def add_client():
         db.session.commit()
         return "Client added with id={}".format(client.id)
     except Exception as e:
-	    return(str(e))
+        return(str(e))
 
 #Get all clients
 @app.route("/getall")
@@ -37,7 +38,7 @@ def get_all():
         clients=Client.query.all()
         return  jsonify([e.serialize() for e in clients])
     except Exception as e:
-	    return(str(e))
+        return(str(e))
 
 #Get client by ID
 @app.route("/get/<id_>")
@@ -46,7 +47,7 @@ def get_by_id(id_):
         client=Client.query.filter_by(id=id_).first()
         return jsonify(client.serialize())
     except Exception as e:
-	    return(str(e))
+        return(str(e))
 
 #Get client by Name
 @app.route("/getn/<name_>")
@@ -55,7 +56,7 @@ def get_by_name(name_):
         client=Client.query.filter_by(name=name_).first()
         return jsonify(client.serialize())
     except Exception as e:
-	    return(str(e))
+        return(str(e))
 
 if __name__ == '__main__':
     app.debug = True
