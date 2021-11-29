@@ -1,31 +1,66 @@
-# ------------------------------------------------
-# Program by Denis Astahov
-#
-#
-# Version      Date           Info
-# 1.0          13-Dec-2019    Initial Version
-#
-# ----------------------------------------------
-from flask import Flask, render_template
+import os
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
-application = Flask(__name__)
+app = Flask(__name__)
 
+app.config['DEBUG'] = True
+app.config['TESTING'] = False
+app.config['CSRF_ENABLED'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://${{ secrets.USER_DATABASE }}:${{ secrets.PASS_DATABASE }}@${{ secrets.HOST_DATABASE }}:${{ secrets.PORT_DATABASE }}/flaskmysql'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-@application.route("/")
-def root():
-    return render_template("index.html")
+from models import Client
 
-@application.route("/help")
-def helppage():
-    return render_template("help.html")
-
-@application.route("/hello")
+#Index
+@app.route("/")
 def index():
-    return "Hello World from Flask Hello Page.<b> v1.0"
+    return "This is the app index"
 
-#--------Main------------------
-if __name__ == "__main__":
-    application.debug = True
-    application.run()
-#------------------------------
+#Add client and money
+@app.route("/add")
+def add_client():
+    name=request.args.get('name')
+    money=request.args.get('money')
+    try:
+        client=Client(
+            name=name,
+            money=money
+        )
+        db.session.add(client)
+        db.session.commit()
+        return "Client added with id={}".format(client.id)
+    except Exception as e:
+        return(str(e))
 
+#Get all clients
+@app.route("/getall")
+def get_all():
+    try:
+        clients=Client.query.all()
+        return  jsonify([e.serialize() for e in clients])
+    except Exception as e:
+        return(str(e))
+
+#Get client by ID
+@app.route("/get/<id_>")
+def get_by_id(id_):
+    try:
+        client=Client.query.filter_by(id=id_).first()
+        return jsonify(client.serialize())
+    except Exception as e:
+        return(str(e))
+
+#Get client by Name
+@app.route("/getn/<name_>")
+def get_by_name(name_):
+    try:
+        client=Client.query.filter_by(name=name_).first()
+        return jsonify(client.serialize())
+    except Exception as e:
+        return(str(e))
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
