@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 application = Flask(__name__)
@@ -13,6 +13,15 @@ from models import Client
 @application.route("/")
 def root():
     return "This is the app index"
+
+#Get all clients
+@application.route("/getall")
+def get_all():
+    try:
+        clients=Client.query.all()
+        return  jsonify([e.serialize() for e in clients])
+    except Exception as e:
+        return(str(e))
 
 @application.route("/help")
 def helppage():
