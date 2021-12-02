@@ -23,14 +23,6 @@ def get_all():
     except Exception as e:
         return(str(e))
 
-@application.route("/help")
-def helppage():
-    return render_template("help.html")
-
-@application.route("/hello")
-def index():
-    return "Hello World from Flask Hello Page.<b> v1.0"
-
 #--------Main------------------
 if __name__ == "__main__":
     application.debug = True
