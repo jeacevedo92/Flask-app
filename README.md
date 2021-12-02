@@ -8,7 +8,7 @@ Despliege inicial en EB - AWS
 ```sh
 Variables de entorno
 
-$ export FLASK_APP=app
+$ export FLASK_APP=aplication
 $ export APP_SETTINGS="config.Config"
 ```
 
